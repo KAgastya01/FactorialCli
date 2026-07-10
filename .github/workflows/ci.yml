@@ -1,0 +1,68 @@
+name: Java Pull Request Verification
+
+on:
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  verify-build:
+    name: Compile and Verify CLI
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Pull down the contributor's code branch
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    # 2. Spin up a secure OpenJDK environment
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: 'maven' # Configured for future scaling, ignored for single-file builds
+
+    # 3. Attempt compilation using native javac
+    - name: Compile FactorialCli.java
+      run: |
+        if [ ! -f FactorialCli.java ]; then
+          echo "::error file=FactorialCli.java::FactorialCli.java not found in project root folder!"
+          exit 1
+        fi
+        javac FactorialCli.java
+
+    # 4. Automated Functional Tests (Ensures the math/CLI logic is correct)
+    - name: Verify CLI Functionality
+      run: |
+        echo "Running automated integration checks..."
+        
+        # Test 1: Standard input validation (5! should equal 120)
+        OUTPUT=$(java -cp . FactorialCli -n 5)
+        if [[ "$OUTPUT" != *"5! = 120"* ]]; then
+          echo "::error::Functional Test Failed! Expected '5! = 120' but got: $OUTPUT"
+          exit 1
+        fi
+        echo "✅ Test 1 Passed: Valid computation."
+
+        # Test 2: Input boundary protection (25 should throw an error message)
+        java -cp . FactorialCli -n 25 2> error.log || true
+        ERR_OUTPUT=$(cat error.log)
+        if [[ "$ERR_OUTPUT" != *"Error:"* ]]; then
+          echo "::error::Security Boundary Failure! Expected an error message for input 25 but got none."
+          exit 1
+        fi
+        echo "✅ Test 2 Passed: Boundary constraints handled safely."
+
+        # Test 3: Invalid data format input handling
+        java -cp . FactorialCli -n alpha 2> error2.log || true
+        ERR_OUTPUT2=$(cat error2.log)
+        if [[ "$ERR_OUTPUT2" != *"Error:"* ]]; then
+          echo "::error::Data Parsing Failure! Expected an error message for text input."
+          exit 1
+        fi
+        echo "✅ Test 3 Passed: Data parsing exceptions blocked cleanly."
+
+    # 5. Friendly log message to encourage new developers
+    - name: PR Status Notification
+      if: success()
+      run: echo "Awesome job! The build compiled smoothly and all system verification checks passed."
