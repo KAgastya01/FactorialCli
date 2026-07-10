@@ -1,4 +1,4 @@
-# FactorialCli
+# FactorialCLI
 
 A robust, dependency-free Java Command Line Interface (CLI) tool designed to compute the factorial of an integer ($n!$). Built entirely using standard `java.util.*` native libraries.
 
@@ -95,3 +95,8 @@ java -cp . FactorialCli -n text
 echo \$?
 # Output: 1 (Indicates shell pipeline failure)
 ```
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/74038190/212750155-3ceddfbd-19d3-40a3-87af-8d329c8323c4.gif" width="700">
+  <br></br>
+  <sub>Made with ☕ and Open Source Love</sub>
+</p>
