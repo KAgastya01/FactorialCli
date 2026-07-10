@@ -2,6 +2,11 @@
 
 A robust, dependency-free Java Command Line Interface (CLI) tool designed to compute the factorial of an integer ($n!$). Built entirely using standard `java.util.*` native libraries.
 
+<p align="center">
+ <img src="https://user-images.githubusercontent.com/74038190/225813708-98b745f2-7d22-48cf-9150-083f1b00d6c9.gif" width="800">
+<br><br>
+</p>
+
 ##  Features
 
 - **POSIX Standard Flags**: Supports short flags (`-n`) and self-documenting long options (`--number`).
