@@ -1,0 +1,14 @@
+name: Open Source Journey Started
+
+on:
+  fork:
+
+jobs:
+  initiate-hero:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Log New Contributor Journey
+      run: |
+        echo "🚀 A new hero has forked the project!"
+        echo "User: ${{ github.event.sender.login }}"
+        echo "Quest Status: Repository copied successfully. Awaiting local clone and first commit!"
