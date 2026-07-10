@@ -1,0 +1,46 @@
+name: Open Source Contributor Welcome
+
+on:
+  pull_request:
+    types: [opened, reopened]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  welcome-and-gamify:
+    name: Level Up Contributor
+    runs-on: ubuntu-latest
+    steps:
+    
+    # 1. Post a visual, encouraging welcome comment instantly
+    - name: Welcome New Hero
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const prAuthor = context.payload.pull_request.user.login;
+          
+          const welcomeMessage = `
+          ## 🎮 QUEST ACCEPTED: First Code Submission!
+          
+          Hey @${prAuthor}, welcome to the **FactorialCli** sandbox! 🚀
+          
+          Thank you so much for opening this Pull Request. You've officially initiated a code integration pipeline!
+          
+          ### 🏆 Potential Unlocked Achievements
+          - ⚔️ **Code Warrior**: Successfully triggered our automated CI compiler test.
+          - 🧪 **Logic Alchemist**: Tweaked math structures without crashing system limits.
+          - ☕ **Java Apprentice**: Leveraged pure \`java.util.*\` natively.
+          
+          ### 🔍 What happens next?
+          Our automated CI server is currently compiling your \`FactorialCli.java\` file. If you see a **green checkmark**, your quest is complete and ready for human review! If you see a **red cross**, don't panic—just look at the error log, make a fix, and push your changes right back here.
+          
+          _Keep coding, stay curious, and welcome to open source!_ ❤️
+          `;
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: welcomeMessage
+          });
