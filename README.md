@@ -1,23 +1,24 @@
 # FactorialCLI
 
-A robust, dependency-free Java Command Line Interface (CLI) tool designed to compute the factorial of an integer ($n!$). Built entirely using standard `java.util.*` native libraries.
+A robust, dependency-free Java Command Line Interface (CLI) tool designed to compute the factorial of arbitrary-size integers ($n!$). Built entirely using standard Java native libraries.
 
 <p align="center">
- <img src="https://user-images.githubusercontent.com/74038190/225813708-98b745f2-7d22-48cf-9150-083f1b00d6c9.gif" width="800">
-<br><br>
+  <img src="https://user-images.githubusercontent.com/74038190/225813708-98b745f2-7d22-48cf-9150-083f1b00d6c9.gif" width="800">
+  <br><br>
 </p>
 
-##  Features
+## Features
 
-- **POSIX Standard Flags**: Supports short flags (`-n`) and self-documenting long options (`--number`).
-- **Zero Dependencies**: Uses only core Java libraries (`java.util.*`), requiring no heavy build frameworks like Maven or Gradle.
-- **Robust Argument Parsing**: Powered by `java.util.Scanner` to securely parse and validate user token blocks.
-- **Pipeline Ready**: Routes diagnostic errors to standard error (`System.err`) and provides operational termination exit codes (`0` for success, `1` for failures) for seamless script integration.
-- **Overflow Protection**: Enforces calculation boundaries ($0 \le n \le 20$) to prevent silent memory signs and bit flipping in `long` primitives.
+- **Infinite Precision Engine**: Powered by `java.math.BigInteger` to seamlessly calculate massive factorials (e.g., $1000!$, $5000!$) with no risk of data overflow or memory clipping.
+- **POSIX Standard Flags**: Supports intuitive short flags (`-n`) and self-documenting long options (`--number`).
+- **Interactive Mode**: Prompt and capture user input securely at runtime using the `-i` flag without pre-configuring command arguments.
+- **Performance Benchmarking**: Toggle on-the-fly execution speed tracking down to fractions of a millisecond.
+- **Pipeline & Stream Friendly**: A dedicated quiet mode strips metadata formatting to output raw results ideal for terminal pipelines, shell scripting, and text redirections (`> file.txt`).
+- **Zero Dependencies**: Pure Java implementation requiring no heavy build frameworks like Maven or Gradle.
 
 ---
 
-##  Prerequisites
+## Prerequisites
 
 - **Java Development Kit (JDK)**: Version 8 or higher.
 - Verify your installation by running:
@@ -38,7 +39,7 @@ A robust, dependency-free Java Command Line Interface (CLI) tool designed to com
 
 ---
 
-##  Execution & Usage
+## Execution & Usage
 
 Always invoke the program from the directory containing your compiled `FactorialCli.class` file. Use the `-cp .` flag to explicitly point Java to your local classpath directory.
 
@@ -48,8 +49,11 @@ java -cp . FactorialCli [FLAGS]
 ```
 
 ### Options
-- `-h, --help`        : Display the built-in manual and usage documentation.
-- `-n, --number <int>`: Specify the target integer (ranging from `0` to `20` inclusive).
+- `-h, --help` : Display the built-in manual and usage documentation.
+- `-n, --number <int>` : Specify the target integer (must be $\ge 0$).
+- `-i, --interactive` : Prompt interactively for the number input.
+- `-b, --benchmark` : Append high-precision execution speed telemetry metrics.
+- `-q, --quiet` : Output **only** the raw numerical solution (ideal for shell piping).
 
 ### Examples
 
@@ -58,23 +62,25 @@ java -cp . FactorialCli [FLAGS]
 java -cp . FactorialCli --help
 ```
 
-**Calculate a Factorial:**
+**Calculate a Massive Factorial with Benchmarking:**
 ```bash
-java -cp . FactorialCli -n 6
-# Output: 6! = 720
+java -cp . FactorialCli -n 50 -b
 ```
 
-**Calculate using Long Flags:**
+**Interactive CLI Session:**
 ```bash
-java -cp . FactorialCli --number 15
-# Output: 15! = 1307674368000
+java -cp . FactorialCli --interactive
+# Terminal will prompt: Enter an integer to calculate its factorial:
+```
+
+**Pipe Raw Output directly to a Text File:**
+```bash
+java -cp . FactorialCli -n 5 -q > result.txt
 ```
 
 ---
 
 ## ⚠️ Error Handling & Troubleshooting
-
-If you encounter execution errors, verify the parameters below:
 
 ### 1. `ClassNotFoundException` Error
 If you receive `Error: Could not find or load main class FactorialCli`:
@@ -82,19 +88,23 @@ If you receive `Error: Could not find or load main class FactorialCli`:
 - Explicitly add the local classpath argument: `java -cp . FactorialCli -n 5`.
 
 ### 2. Constraints and Range Errors
-The tool restricts input boundaries up to `20` because standard signed `long` structures overflow starting at $21!$. Passing invalid bounds or formats will output structured shell failures:
+Negative integers are invalid. Passing negative bounds or unparseable input structures will trigger clean validation failures:
+
 ```bash
-java -cp . FactorialCli -n 25
-# Standard Error Output: Error: Value out of range. Number must be between 0 and 20 to prevent data overflow.
+java -cp . FactorialCli -n -5
+# Standard Error Output: Error: Value out of range. Number must be greater than or equal to 0.
 ```
+
 ```bash
 java -cp . FactorialCli -n text
 # Standard Error Output: Error: 'text' is not a valid integer format.
 ```
+
 ```bash
 echo \$?
-# Output: 1 (Indicates shell pipeline failure)
+# Output: 1 (Indicates shell pipeline failure exit code)
 ```
+
 <p align="center">
   <img src="https://user-images.githubusercontent.com/74038190/212750155-3ceddfbd-19d3-40a3-87af-8d329c8323c4.gif" width="700">
   <br></br>
